@@ -1,5 +1,9 @@
 # network-disk
 
+## 页面预览
+
+<img src="https://github.com/fizzxue/network-disk-webui/blob/master/src/assets/all.png" alt="全部文件效果图" align=center />
+
 ## Project setup
 ```
 npm install
