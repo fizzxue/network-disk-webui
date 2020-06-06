@@ -1,20 +1,24 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import All from '../views/All.vue'
+import all from '../views/All'
 
 Vue.use(VueRouter)
 
-  const routes = [
-  {
-    path: '/',
-    component: All
-  }
+const routes = [
+    {
+        path: '/',
+        redirect: '/all'
+    },
+    {
+        path: '/all',
+        component: all
+    }
 ]
 
 const router = new VueRouter({
-  mode: 'history',
-  base: process.env.BASE_URL,
-  routes
+    mode: 'history',
+    base: process.env.BASE_URL,
+    routes
 })
 
 export default router

@@ -1,9 +1,9 @@
 <template>
     <div>
         <el-button icon="el-icon-upload" type="primary">上传</el-button>
-        <el-button>新建文件夹</el-button>
-        <el-button v-if="this.multipleSelection.length >= 1">下载</el-button>
-        <el-button v-if="this.multipleSelection.length >= 1">删除</el-button>
+        <el-button icon="el-icon-folder-add">新建文件夹</el-button>
+        <el-button icon="el-icon-download" v-if="this.multipleSelection.length >= 1">下载</el-button>
+        <el-button icon="el-icon-delete" v-if="this.multipleSelection.length >= 1">删除</el-button>
         <el-button v-if="this.multipleSelection.length === 1">重命名</el-button>
         <el-button disabled v-if="this.multipleSelection.length > 1">重命名</el-button>
         <el-button v-if="this.multipleSelection.length >= 1">复制到</el-button>
