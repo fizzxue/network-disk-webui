@@ -1,7 +1,7 @@
 <template>
     <div>
         <el-button icon="el-icon-upload" type="primary">上传</el-button>
-        <el-button icon="el-icon-folder-add">新建文件夹</el-button>
+        <el-button @click="addNewRow" icon="el-icon-folder-add">新建文件夹</el-button>
         <el-button icon="el-icon-download" v-if="this.multipleSelection.length >= 1">下载</el-button>
         <el-button icon="el-icon-delete" v-if="this.multipleSelection.length >= 1">删除</el-button>
         <el-button v-if="this.multipleSelection.length === 1">重命名</el-button>
@@ -26,7 +26,17 @@
                     sortable>
                 <template slot-scope="scope">
                     <img :src="getPng(scope.row)" style="vertical-align: middle;margin-right: 10px;"/>
-                    <span @click="getListByParentId" class="spanLink"
+
+                    <el-input style="display: inline-block; width: 20%" v-if="scope.row.isEdit"
+                              value="新建文件夹"></el-input>
+                    <el-button @click="addFile" circle icon="el-icon-check" size="mini"
+                               style="display: inline; margin-left: 3px;" type="success"
+                               v-if="scope.row.isEdit"></el-button>
+                    <el-button @click="cancelAddFile" circle icon="el-icon-delete" size="mini"
+                               style="display: inline; margin-left: 3px;" type="danger"
+                               v-if="scope.row.isEdit"></el-button>
+
+                    <span @click="getListByParentId" class="spanLink" v-else
                           style="padding-left: 1px; text-align: center; cursor: pointer;">{{scope.row.fileName}}</span>
                 </template>
             </el-table-column>
@@ -54,7 +64,8 @@
             return {
                 loading: true,
                 tableData: [],
-                multipleSelection: []
+                multipleSelection: [],
+                editable: true
             }
         },
         mounted() {
@@ -74,7 +85,6 @@
                 this.multipleSelection = val
             },
             getPng(row) {
-                console.log("../assets/" + row.extName + ".png")
                 return require("../assets/" + row.extName + ".png")
             },
             getListByParentId() {
@@ -87,6 +97,21 @@
                     updateTime: '2006-02-11 20:29:03'
                 }]
                 this.loading = false
+            },
+            addNewRow() {
+                this.tableData.unshift({
+                    fileName: '新建文件夹',
+                    fileSize: '-',
+                    extName: 'dir',
+                    updateTime: '-',
+                    isEdit: true
+                })
+            },
+            addFile() {
+                this.tableData[0].isEdit = false
+            },
+            cancelAddFile() {
+                this.tableData.shift()
             }
         }
     }
