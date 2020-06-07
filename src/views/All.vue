@@ -2,13 +2,15 @@
     <div>
         <el-button icon="el-icon-upload" type="primary">上传</el-button>
         <el-button @click="addNewRow" icon="el-icon-folder-add">新建文件夹</el-button>
-        <el-button icon="el-icon-download" v-if="this.multipleSelection.length >= 1">下载</el-button>
-        <el-button icon="el-icon-delete" v-if="this.multipleSelection.length >= 1">删除</el-button>
-        <el-button v-if="this.multipleSelection.length === 1">重命名</el-button>
-        <el-button disabled v-if="this.multipleSelection.length > 1">重命名</el-button>
-        <el-button v-if="this.multipleSelection.length >= 1">复制到</el-button>
-        <el-button v-if="this.multipleSelection.length >= 1">移动到</el-button>
-        <span style="margin-top: 10px; margin-left: 20px;" v-if="this.multipleSelection.length > 0">已选中{{this.multipleSelection.length}}个文件/文件夹</span>
+        <el-button icon="el-icon-download" v-if="multipleSelectionLength >= 1">下载</el-button>
+        <el-button @click="deleteFileDialogVisible = true" icon="el-icon-delete" v-if="multipleSelectionLength >= 1">
+            删除
+        </el-button>
+        <el-button v-if="multipleSelectionLength === 1">重命名</el-button>
+        <el-button disabled v-if="multipleSelectionLength > 1">重命名</el-button>
+        <el-button v-if="multipleSelectionLength > 0">复制到</el-button>
+        <el-button v-if="multipleSelectionLength > 0">移动到</el-button>
+        <span style="margin-top: 10px; margin-left: 20px;" v-if="this.multipleSelection.length > 0">已选中{{multipleSelectionLength}}个文件/文件夹</span>
         <span style="float: right; margin-top: 11px;">已全部加载，共{{this.tableData.length}}个</span>
         <el-table
                 :data="tableData"
@@ -53,6 +55,20 @@
                     sortable>
             </el-table-column>
         </el-table>
+
+        <el-dialog
+                :visible.sync="deleteFileDialogVisible"
+                center
+                title="提示"
+                width="30%">
+
+            <span>确认要把所选文件放入回收站吗？<br/> 删除的文件可在10天内通过回收站还原</span>
+
+            <span class="dialog-footer" slot="footer">
+                <el-button @click="deleteFileDialogVisible = false">取 消</el-button>
+                <el-button @click="deleteFile" type="primary">确 定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -65,7 +81,9 @@
                 loading: true,
                 tableData: [],
                 multipleSelection: [],
-                editable: true
+                multipleSelectionLength: [],
+                editable: true,
+                deleteFileDialogVisible: false
             }
         },
         mounted() {
@@ -83,6 +101,7 @@
             },
             handleSelectionChange(val) {
                 this.multipleSelection = val
+                this.multipleSelectionLength = val.length
             },
             getPng(row) {
                 return require("../assets/" + row.extName + ".png")
@@ -109,9 +128,24 @@
             },
             addFile() {
                 this.tableData[0].isEdit = false
+                this.$message({
+                    message: '创建文件夹成功',
+                    type: 'success'
+                });
             },
             cancelAddFile() {
                 this.tableData.shift()
+            },
+            deleteFile() {
+                this.deleteFileDialogVisible = false
+                //调用后端删除文件接口multipleSelection
+                this.loading = true
+                this.loadData()
+                this.loading = false
+                this.$message({
+                    message: '删除文件成功',
+                    type: 'success'
+                });
             }
         }
     }
