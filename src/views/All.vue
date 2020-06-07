@@ -8,8 +8,8 @@
         </el-button>
         <el-button @click="reNameFile" v-if="multipleSelectionLength === 1">重命名</el-button>
         <el-button disabled v-if="multipleSelectionLength > 1">重命名</el-button>
-        <el-button v-if="multipleSelectionLength > 0">复制到</el-button>
-        <el-button v-if="multipleSelectionLength > 0">移动到</el-button>
+        <el-button @click="openCopyOrMoveFileDialog('复制到')" v-if="multipleSelectionLength > 0">复制到</el-button>
+        <el-button @click="openCopyOrMoveFileDialog('移动到')" v-if="multipleSelectionLength > 0">移动到</el-button>
         <span style="margin-top: 10px; margin-left: 20px;" v-if="this.multipleSelection.length > 0">已选中{{multipleSelectionLength}}个文件/文件夹</span>
         <span style="float: right; margin-top: 11px;">已全部加载，共{{tableData.length}}个</span>
         <el-table
@@ -71,6 +71,20 @@
                 <el-button @click="deleteFile" type="primary">确 定</el-button>
             </span>
         </el-dialog>
+
+        <el-dialog
+                :title="copyOrMoveTitle"
+                :visible.sync="copyOrMoveFileDialogVisible"
+                center
+                width="30%">
+
+            <span>111</span>
+
+            <span class="dialog-footer" slot="footer">
+                <el-button @click="copyOrMoveFileDialogVisible = false">取 消</el-button>
+                <el-button @click="deleteFile" type="primary">确 定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -82,9 +96,11 @@
             return {
                 loading: true,
                 tableData: [],
+                copyOrMoveTitle: '',
                 multipleSelection: [],
                 multipleSelectionLength: [],
                 deleteFileDialogVisible: false,
+                copyOrMoveFileDialogVisible: false,
                 editFileNameKey: 1
             }
         },
@@ -163,6 +179,10 @@
             reNameFile() {
                 this.multipleSelection[0].isEdit = true
                 ++this.editFileNameKey
+            },
+            openCopyOrMoveFileDialog(title) {
+                this.copyOrMoveFileDialogVisible = true
+                this.copyOrMoveTitle = title
             }
         }
     }
