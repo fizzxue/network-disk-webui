@@ -6,17 +6,17 @@
         <el-button @click="deleteFileDialogVisible = true" icon="el-icon-delete" v-if="multipleSelectionLength >= 1">
             删除
         </el-button>
-        <el-button v-if="multipleSelectionLength === 1">重命名</el-button>
+        <el-button @click="reNameFile" v-if="multipleSelectionLength === 1">重命名</el-button>
         <el-button disabled v-if="multipleSelectionLength > 1">重命名</el-button>
         <el-button v-if="multipleSelectionLength > 0">复制到</el-button>
         <el-button v-if="multipleSelectionLength > 0">移动到</el-button>
         <span style="margin-top: 10px; margin-left: 20px;" v-if="this.multipleSelection.length > 0">已选中{{multipleSelectionLength}}个文件/文件夹</span>
-        <span style="float: right; margin-top: 11px;">已全部加载，共{{this.tableData.length}}个</span>
+        <span style="float: right; margin-top: 11px;">已全部加载，共{{tableData.length}}个</span>
         <el-table
                 :data="tableData"
                 @selection-change="handleSelectionChange"
-                height="850"
                 style="width: 100%;"
+                max-height="850"
                 v-loading="loading">
             <el-table-column
                     type="selection"
@@ -27,11 +27,13 @@
                     min-width="60%"
                     sortable>
                 <template slot-scope="scope">
-                    <img :src="getPng(scope.row)" style="vertical-align: middle;margin-right: 10px;"/>
+
+                    <img :key="editFileNameKey" :src="getPng(scope.row)"
+                         style="vertical-align: middle;margin-right: 10px;"/>
 
                     <el-input style="display: inline-block; width: 20%" v-if="scope.row.isEdit"
-                              value="新建文件夹"></el-input>
-                    <el-button @click="addFile" circle icon="el-icon-check" size="mini"
+                              v-model="scope.row.fileName"></el-input>
+                    <el-button @click="addFile(scope.row.isAdd)" circle icon="el-icon-check" size="mini"
                                style="display: inline; margin-left: 3px;" type="success"
                                v-if="scope.row.isEdit"></el-button>
                     <el-button @click="cancelAddFile" circle icon="el-icon-delete" size="mini"
@@ -82,8 +84,8 @@
                 tableData: [],
                 multipleSelection: [],
                 multipleSelectionLength: [],
-                editable: true,
-                deleteFileDialogVisible: false
+                deleteFileDialogVisible: false,
+                editFileNameKey: 1
             }
         },
         mounted() {
@@ -123,15 +125,26 @@
                     fileSize: '-',
                     extName: 'dir',
                     updateTime: '-',
-                    isEdit: true
+                    isEdit: true,
+                    isAdd: true
                 })
             },
-            addFile() {
-                this.tableData[0].isEdit = false
-                this.$message({
-                    message: '创建文件夹成功',
-                    type: 'success'
-                });
+            addFile(isAdd) {
+                if (isAdd === true) {
+                    this.tableData[0].isEdit = false;
+                    this.$message({
+                        message: '创建文件夹成功',
+                        type: 'success'
+                    });
+                } else {
+                    this.multipleSelection[0].isEdit = false
+                    ++this.editFileNameKey
+                    this.$message({
+                        message: '重命名成功',
+                        type: 'success'
+                    })
+                }
+
             },
             cancelAddFile() {
                 this.tableData.shift()
@@ -146,6 +159,10 @@
                     message: '删除文件成功',
                     type: 'success'
                 });
+            },
+            reNameFile() {
+                this.multipleSelection[0].isEdit = true
+                ++this.editFileNameKey
             }
         }
     }
