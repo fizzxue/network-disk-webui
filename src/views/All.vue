@@ -98,7 +98,6 @@
                 tableData: [],
                 copyOrMoveTitle: '',
                 multipleSelection: [],
-                multipleSelectionLength: [],
                 deleteFileDialogVisible: false,
                 copyOrMoveFileDialogVisible: false,
                 editFileNameKey: 1
@@ -106,6 +105,11 @@
         },
         mounted() {
             this.loadData()
+        },
+        computed: {
+            multipleSelectionLength: function () {
+                return this.multipleSelection.length
+            }
         },
         methods: {
             loadData() {
@@ -119,7 +123,6 @@
             },
             handleSelectionChange(val) {
                 this.multipleSelection = val
-                this.multipleSelectionLength = val.length
             },
             getPng(row) {
                 return require("../assets/" + row.extName + ".png")
