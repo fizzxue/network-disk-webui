@@ -1,7 +1,7 @@
 <template>
     <div>
         <el-button icon="el-icon-upload" type="primary">上传</el-button>
-        <el-button @click="addNewRow" icon="el-icon-folder-add">新建文件夹</el-button>
+        <el-button @click="addNewRow" icon="el-icon-folder-add" v-show="!tableDataUrl">新建文件夹</el-button>
         <el-button icon="el-icon-download" v-if="multipleSelectionLength >= 1">下载</el-button>
         <el-button @click="deleteFileDialogVisible = true" icon="el-icon-delete" v-if="multipleSelectionLength >= 1">
             删除
@@ -103,6 +103,7 @@
                 editFileNameKey: 1
             }
         },
+        props: ['tableDataUrl'],
         mounted() {
             this.loadData()
         },
@@ -113,9 +114,13 @@
         },
         methods: {
             loadData() {
-                this.loading = true
+                let url = '/netWorkDisk/list'
+                if (this.tableDataUrl) {
+                    url = this.tableDataUrl
+                }
+                this.loading = true;
                 request({
-                    url: '/netWorkDisk/list'
+                    url: url
                 }).then(response => {
                     this.tableData = response.data.list
                 })

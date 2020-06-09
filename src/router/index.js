@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import all from '../views/All'
+import All from '../views/All'
+import Picture from "../views/Picture";
 
 Vue.use(VueRouter)
 
@@ -11,7 +12,11 @@ const routes = [
     },
     {
         path: '/all',
-        component: all
+        component: All
+    },
+    {
+        path: '/picture',
+        component: Picture
     }
 ]
 
